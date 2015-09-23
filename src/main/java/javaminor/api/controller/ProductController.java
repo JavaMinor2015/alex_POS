@@ -1,11 +1,10 @@
 package javaminor.api.controller;
 
 import com.google.gson.Gson;
-import javaminor.api.domain.concrete.Products;
+import javaminor.api.domain.RestModel;
 import javaminor.api.util.RestUtil;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.logic.ScanItemRepository;
-import javaminor.util.RefUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,16 +18,14 @@ import javax.ws.rs.core.Response;
 public class ProductController {
 
     @GET
-    public Response getProducts(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
-        Products list = new Products();
-        if (start > limit) {
-            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (start - limit) + "&limit=" + limit);
-        } else {
-            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (0) + "&limit=" + limit);
-        }
-        list.setNext(RefUtil.BASE_URL + Product.ALL + "?start=" + (start + limit) + "&limit=" + limit);
-        list.setProductList(ScanItemRepository.getProducts(start, limit));
-        return RestUtil.buildReponse(list, null);
+    public Response getProducts(@DefaultValue("0") @QueryParam("start") final
+                                int start, @DefaultValue("10")
+                                @QueryParam("limit") final int limit) {
+        return RestUtil.buildReponse(
+                new RestModel<>(Product.ALL,
+                        start,
+                        limit,
+                        ScanItemRepository.getProducts(start, limit)));
     }
 
     @GET
@@ -56,7 +53,7 @@ public class ProductController {
 
     @PUT
     @Path("/update")
-    @Consumes( { MediaType.APPLICATION_FORM_URLENCODED })
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Response update(@FormParam("json") String json) {
         Gson gson = new Gson();
 
@@ -64,7 +61,8 @@ public class ProductController {
         Product product = gson.fromJson(json, Product.class);
         System.err.println(json);
         if (!ScanItemRepository.scanItemExists(product)) {
-            return RestUtil.buildReponse("Failed to update product, id not found.", json);
+            return RestUtil.buildReponse("Failed to update product, id not " +
+                    "found.", json);
         }
 
         boolean success = ScanItemRepository.updateProduct(product);
@@ -78,9 +76,12 @@ public class ProductController {
     @DELETE
     @Path("/{id}")
     public Response deleteProduct(@PathParam("id") final int id) {
-        return RestUtil.buildReponse(ScanItemRepository.setItemDisabled(id), id);
+        return RestUtil.buildReponse(ScanItemRepository.setItemDisabled(id),
+                id);
     }
 
+    //
+    // Extras
 
     @GET
     @Path("/type")
@@ -91,13 +92,15 @@ public class ProductController {
     @GET
     @Path("/type/{type}")
     public Response getProductByType(@PathParam("type") final String type) {
-        return RestUtil.buildReponse(ScanItemRepository.getItemsByType(ScanItemRepository.getScanItems(), type), type);
+        return RestUtil.buildReponse(ScanItemRepository.getItemsByType
+                (ScanItemRepository.getScanItems(), type), type);
     }
 
     @GET
     @Path("/barcode/{code}")
     public Response getProductByCode(@PathParam("code") final String code) {
-        return RestUtil.buildReponse(ScanItemRepository.getItemByCode(code), code);
+        return RestUtil.buildReponse(ScanItemRepository.getItemByCode(code),
+                code);
     }
 
 }

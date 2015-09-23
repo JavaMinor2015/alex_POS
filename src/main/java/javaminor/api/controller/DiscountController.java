@@ -1,10 +1,9 @@
 package javaminor.api.controller;
 
-import javaminor.api.domain.concrete.Discounts;
+import javaminor.api.domain.RestModel;
 import javaminor.api.util.RestUtil;
 import javaminor.domain.abs.Discount;
 import javaminor.logic.DiscountRepository;
-import javaminor.util.RefUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,15 +18,11 @@ public class DiscountController {
 
     @GET
     public Response getDiscounts(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
-        Discounts list = new Discounts();
-        if(start > limit){
-            list.setPrev(RefUtil.BASE_URL + Discount.ALL + "?start=" + (start-limit) + "&limit=" + limit);
-        }else{
-            list.setPrev(RefUtil.BASE_URL + Discount.ALL + "?start=" + (0) + "&limit=" + limit);
-        }
-        list.setNext(RefUtil.BASE_URL + Discount.ALL + "?start=" + (start + limit) + "&limit=" + limit);
-        list.setDiscountList(DiscountRepository.getDiscounts(start, limit));
-        return RestUtil.buildReponse(list, null);
+        return RestUtil.buildReponse(
+                new RestModel<>(Discount.ALL,
+                        start,
+                        limit,
+                        DiscountRepository.getDiscounts(start, limit)));
     }
 
     @GET
