@@ -2,7 +2,6 @@ package javaminor.main;
 
 import javaminor.domain.abs.ScanItem;
 import javaminor.logic.CashRegisterImpl;
-import javaminor.logic.ScanItemRepository;
 import javaminor.logic.abs.CashRegister;
 import javaminor.util.NumUtil;
 import javaminor.util.PreferenceUtil;
@@ -20,8 +19,8 @@ public class Main {
     public static void main(String[] args) {
 
         // for test data only, get 10 random products
-        List<ScanItem> randomProducts = ScanItemRepository.getPopulator().getRandomSelectionFromProductList(10);
-        ScanItem randomFidelityCard = ScanItemRepository.getPopulator().getRandomFidelityCard();
+        List<ScanItem> randomProducts = ServletMain.getPopulator().getRandomSelectionFromProductList(10);
+        ScanItem randomFidelityCard = ServletMain.getPopulator().getRandomFidelityCard();
 
         CashRegister register1 = new CashRegisterImpl();
 

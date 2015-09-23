@@ -2,6 +2,7 @@ package javaminor.logic;
 
 import javaminor.domain.abs.ScanItem;
 import javaminor.logic.abs.CashRegister;
+import javaminor.main.ServletMain;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -15,9 +16,11 @@ public class CashRegisterImplTest extends TestCase {
     @Test
     public void testRegister() {
 
+        new ServletMain().contextInitialized(null);
+
         // for test data only, get 10 random products
-        List<ScanItem> randomProducts = ScanItemRepository.getPopulator().getRandomSelectionFromProductList(10);
-        ScanItem randomFidelityCard = ScanItemRepository.getPopulator().getRandomFidelityCard();
+        List<ScanItem> randomProducts = ServletMain.getPopulator().getRandomSelectionFromProductList(10);
+        ScanItem randomFidelityCard = ServletMain.getPopulator().getRandomFidelityCard();
 
 
         CashRegister register = new CashRegisterImpl();

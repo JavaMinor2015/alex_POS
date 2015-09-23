@@ -3,9 +3,9 @@ package javaminor.logic;
 import javaminor.domain.abs.ScanItem;
 import javaminor.domain.concrete.scanitems.FidelityCard;
 import javaminor.domain.concrete.scanitems.Product;
-import javaminor.util.Populator;
 import javaminor.util.PreferenceUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,18 +20,8 @@ public class ScanItemRepository {
     private static Logger logger = LogManager.getLogger(ScanItemRepository.class.getName());
 
     @Getter
+    @Setter
     private static List<ScanItem> scanItems;
-    private Object itemTypes;
-
-    @Getter
-    private static Populator populator;
-
-    static{
-        // TODO replace when database has been implemented
-        populator = new Populator();
-        populator.populate();
-        scanItems = populator.getAllScanItems();
-    }
 
     public ScanItemRepository(){
 
