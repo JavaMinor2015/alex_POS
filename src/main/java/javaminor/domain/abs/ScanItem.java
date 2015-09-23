@@ -17,6 +17,7 @@ import java.util.Map;
 @Getter
 @Setter
 public abstract class ScanItem {
+    private Integer id;
     private String name;
     private Map<String, String> scanCodes = new HashMap<String, String>();
     private Map<String, String> properties = new HashMap<String, String>();

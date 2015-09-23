@@ -52,14 +52,17 @@ public class Populator {
     private void generateDummyProducts(final int amount){
 
         Product alwaysExists = new Product();
+        alwaysExists.setId(0);
         alwaysExists.setName("ProductName");
         alwaysExists.addCode("barcode", "b123456");
         alwaysExists.setPrice(NumUtil.getRandomDouble(500));
+        alwaysExists.setSelf(RefUtil.BASE_URL + Product.ALL + "/" + 0);
         scanItemsList.add(alwaysExists);
 
-        for (int i = 0; i < amount; i++) {
+        for (int i = 1; i < amount; i++) {
             Product product = new Product();
-            product.setName("Product_" + (i + 1));
+            product.setId(i);
+            product.setName("Product_" + (i));
 
 
             product.addCode("barcode", "b" + getUniqueRandomString());
@@ -67,6 +70,7 @@ public class Populator {
             product.addCode("digitcode", "d" + getUniqueRandomString());
 
             product.setPrice(NumUtil.getRandomDouble(500));
+            product.setSelf(RefUtil.BASE_URL+Product.ALL+"/"+i);
 
 
             if(NumUtil.oneInTen()){
@@ -113,6 +117,8 @@ public class Populator {
             fidelityCard.addCode("cardcode", "FC" + getUniqueRandomString());
 
             fidelityCard.setCustomer(customer);
+            fidelityCard.setId(i);
+            fidelityCard.setSelf(RefUtil.BASE_URL+FidelityCard.ALL+"/"+i);
             fidelityCardList.add(fidelityCard);
         }
     }

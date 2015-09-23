@@ -1,8 +1,11 @@
 package javaminor.api.controller;
 
 import com.google.gson.Gson;
+import javaminor.api.domain.concrete.Products;
+import javaminor.api.util.RestUtil;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.logic.ScanItemRepository;
+import javaminor.util.RefUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,20 +14,34 @@ import javax.ws.rs.core.Response;
 /**
  * Created by Alex on 9/22/15.
  */
-@Path("/products")
+@Path(Product.ALL)
 @Produces({MediaType.APPLICATION_JSON})
 public class ProductController {
 
     @GET
-    public Response getProducts() {
-        return buildReponse(ScanItemRepository.getScanItems(), null);
+    public Response getProducts(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
+        Products list = new Products();
+        if(start > limit){
+            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (start-limit) + "&limit=" + limit);
+        }else{
+            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (0) + "&limit=" + limit);
+        }
+        list.setNext(RefUtil.BASE_URL + Product.ALL + "?start=" + (start+limit) + "&limit=" + limit);
+        list.setProductList(ScanItemRepository.getProducts(start, limit));
+        return RestUtil.buildReponse(list, null);
     }
 
     @GET
-    @Path("/{code: \\w+}")
-    public Response getProductByCode(@PathParam("code") final String code) {
-        return buildReponse(ScanItemRepository.getItemByCode(code), code);
+    @Path("/{id}")
+    public Response getProductById(@PathParam("id") final int id){
+        return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
     }
+
+//    @GET
+//    @Path("/barcode/{code}")
+//    public Response getProductByCode(@PathParam("code") final String code) {
+//        return RestUtil.buildReponse(ScanItemRepository.getItemByCode(code), code);
+//    }
 
     @POST
     @Path("/create")
@@ -38,36 +55,24 @@ public class ProductController {
         }
         boolean success = ScanItemRepository.addProduct(product);
         if(success){
-            return buildReponse("Product added: ",product);
+            return RestUtil.buildReponse("Product added: ", product.getId());
         }else{
-            return buildReponse("Failed to add product", json);
+            return RestUtil.buildReponse("Failed to add product", json);
         }
     }
 
+
     @GET
-    @Path("/type/")
+    @Path("/type")
     public Response getProductByType() {
-        return buildReponse(ScanItemRepository.getItemTypes(), null);
+        return RestUtil.buildReponse(ScanItemRepository.getItemTypes(), null);
     }
 
     @GET
     @Path("/type/{type}")
     public Response getProductByType(@PathParam("type") final String type) {
-        return buildReponse(ScanItemRepository.getItemsByType(ScanItemRepository.getScanItems(), type), type);
+        return RestUtil.buildReponse(ScanItemRepository.getItemsByType(ScanItemRepository.getScanItems(), type), type);
     }
 
-    /**
-     * Builds a response around the object and parameters.
-     *
-     * @param o the object to jsonify
-     * @param params optional parameters from the user
-     * @return a Response object
-     */
-    private Response buildReponse(Object o, Object... params){
-        Gson gson = new Gson();
-        if(o==null){
-            return Response.ok(gson.toJson("Product(s) not found for parameters: " + params)).build();
-        }
-        return Response.ok(gson.toJson(o)).build();
-    }
+
 }

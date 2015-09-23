@@ -1,6 +1,7 @@
 package javaminor.logic;
 
 import javaminor.domain.abs.ScanItem;
+import javaminor.domain.concrete.scanitems.FidelityCard;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.util.Populator;
 import javaminor.util.PreferenceUtil;
@@ -26,7 +27,6 @@ public class ScanItemRepository {
     private static Populator populator;
 
     static{
-
         // TODO replace when database has been implemented
         populator = new Populator();
         populator.populate();
@@ -35,6 +35,71 @@ public class ScanItemRepository {
 
     public ScanItemRepository(){
 
+    }
+
+    public static List<ScanItem> getProducts(){
+        return getProducts(0,10);
+    }
+
+    public static List<ScanItem> getProducts(final int startIndex){
+        return getProducts(startIndex,10);
+    }
+
+    public static List<ScanItem> getProducts(final int startIndex, final int size){
+        List<ScanItem> products = filterProducts(scanItems);
+
+        int start = startIndex;
+        int end = startIndex + size;
+
+        if(start > products.size()){
+            start = products.size() - size;
+        }
+        if(end > products.size()){
+            end = products.size();
+        }
+        return products.subList(start, end);
+    }
+
+    public static List<ScanItem> getCards(){
+        return getCards(0, 10);
+    }
+
+    public static List<ScanItem> getCards(final int startIndex){
+        return getCards(startIndex, 10);
+    }
+
+    public static List<ScanItem> getCards(final int startIndex, final int size){
+        List<ScanItem> cards = filterCards(scanItems);
+
+        int start = startIndex;
+        int end = startIndex + size;
+
+        if(start > cards.size()){
+            start = cards.size() - size;
+        }
+        if(end > cards.size()){
+            end = cards.size();
+        }
+        return cards.subList(start, end);
+    }
+
+    private static List<ScanItem> filterProducts(final List<ScanItem> scanItems) {
+        List<ScanItem> results = new ArrayList<>();
+        for (ScanItem scanItem : scanItems) {
+            if(scanItem instanceof Product){
+                results.add(scanItem);
+            }
+        }
+        return results;
+    }
+    private static List<ScanItem> filterCards(final List<ScanItem> scanItems) {
+        List<ScanItem> results = new ArrayList<>();
+        for (ScanItem scanItem : scanItems) {
+            if(scanItem instanceof FidelityCard){
+                results.add(scanItem);
+            }
+        }
+        return results;
     }
 
     public static ScanItem getItemByCode(final String code){
@@ -103,6 +168,14 @@ public class ScanItemRepository {
         return true;
     }
 
+    public static boolean addCard(final FidelityCard card) {
+        if (card==null || !(card instanceof FidelityCard) | scanItemExists(card)){
+            return false;
+        }
+        scanItems.add(card);
+        return true;
+    }
+
     /**
      * Returns true if a scan item already exists, false otherwise.
      * @param item the item to check
@@ -110,10 +183,19 @@ public class ScanItemRepository {
      */
     public static boolean scanItemExists(final ScanItem item){
         for (ScanItem scanItem : scanItems) {
-            if(scanItem.equals(item)){
-                return true; // TODO change
+            if(scanItem.getId().equals(item.getId())){
+                return true;
             }
         }
         return false;
+    }
+
+    public static ScanItem getItemById(int id) {
+        for (ScanItem scanItem : scanItems) {
+            if(scanItem.getId().equals(id)){
+                return scanItem;
+            }
+        }
+        return null;
     }
 }

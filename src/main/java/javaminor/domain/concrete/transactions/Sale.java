@@ -3,6 +3,8 @@ package javaminor.domain.concrete.transactions;
 import javaminor.domain.abs.PaymentItem;
 import javaminor.domain.abs.Transaction;
 import javaminor.util.PreferenceUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +14,13 @@ import java.util.List;
 /**
  * Created by alex on 9/8/15.
  */
+@Getter
+@Setter
 public class Sale extends Transaction{
+
+    public static final String ALL = "/sales";
+    private String self;
+
     private static Logger logger = LogManager.getLogger(Sale.class.getName());
 
     // TODO clean up mess below

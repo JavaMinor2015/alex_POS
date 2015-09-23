@@ -13,6 +13,8 @@ import lombok.Setter;
 @Setter
 public class Product extends ScanItem{
     private double price;
+    public static final String ALL = "/products";
+    private String self;
 
     /**
      * Easy retrieval method for price.
