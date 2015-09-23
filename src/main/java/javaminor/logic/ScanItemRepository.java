@@ -42,7 +42,7 @@ public class ScanItemRepository {
     }
 
     public static List<ScanItem> getProducts(final int startIndex){
-        return getProducts(startIndex,10);
+        return getProducts(startIndex, 10);
     }
 
     public static List<ScanItem> getProducts(final int startIndex, final int size){
@@ -86,7 +86,7 @@ public class ScanItemRepository {
     private static List<ScanItem> filterProducts(final List<ScanItem> scanItems) {
         List<ScanItem> results = new ArrayList<>();
         for (ScanItem scanItem : scanItems) {
-            if(scanItem instanceof Product){
+            if(scanItem instanceof Product & !scanItem.isDisabled()){
                 results.add(scanItem);
             }
         }
@@ -95,7 +95,7 @@ public class ScanItemRepository {
     private static List<ScanItem> filterCards(final List<ScanItem> scanItems) {
         List<ScanItem> results = new ArrayList<>();
         for (ScanItem scanItem : scanItems) {
-            if(scanItem instanceof FidelityCard){
+            if(scanItem instanceof FidelityCard & !scanItem.isDisabled()){
                 results.add(scanItem);
             }
         }
@@ -168,6 +168,16 @@ public class ScanItemRepository {
         return true;
     }
 
+    public static boolean updateProduct(final Product product) {
+        for (int i = 0; i < scanItems.size(); i++) {
+            if(scanItems.get(i).getId().equals(product.getId())){
+                scanItems.add(i,product);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean addCard(final FidelityCard card) {
         if (card==null || !(card instanceof FidelityCard) | scanItemExists(card)){
             return false;
@@ -190,12 +200,23 @@ public class ScanItemRepository {
         return false;
     }
 
-    public static ScanItem getItemById(int id) {
+    public static ScanItem getItemById(final int id) {
         for (ScanItem scanItem : scanItems) {
             if(scanItem.getId().equals(id)){
                 return scanItem;
             }
         }
         return null;
+    }
+
+
+    public static boolean setItemDisabled(final int id) {
+        for (int i = 0; i < scanItems.size(); i++) {
+            if(scanItems.get(i).getId().equals(id)){
+                scanItems.get(i).setDisabled(true);
+                return true;
+            }
+        }
+        return false;
     }
 }

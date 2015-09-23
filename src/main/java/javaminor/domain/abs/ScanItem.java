@@ -19,6 +19,7 @@ import java.util.Map;
 public abstract class ScanItem {
     private Integer id;
     private String name;
+    private boolean disabled = false;
     private Map<String, String> scanCodes = new HashMap<String, String>();
     private Map<String, String> properties = new HashMap<String, String>();
     private Discount discount;

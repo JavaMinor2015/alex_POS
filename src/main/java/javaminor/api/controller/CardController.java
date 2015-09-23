@@ -30,4 +30,10 @@ public class CardController {
         list.setCards(ScanItemRepository.getCards(start, limit));
         return RestUtil.buildReponse(list, null);
     }
+
+    @GET
+    @Path("/{id}")
+    public Response getProductById(@PathParam("id") final int id){
+        return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
+    }
 }

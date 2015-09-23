@@ -19,6 +19,8 @@ import java.util.List;
 public class Populator {
     private List<String> randomStrings;
 
+    private int idCounter = 0;
+
     @Getter
     private List<ScanItem> scanItemsList;
 
@@ -52,7 +54,7 @@ public class Populator {
     private void generateDummyProducts(final int amount){
 
         Product alwaysExists = new Product();
-        alwaysExists.setId(0);
+        alwaysExists.setId(idCounter);
         alwaysExists.setName("ProductName");
         alwaysExists.addCode("barcode", "b123456");
         alwaysExists.setPrice(NumUtil.getRandomDouble(500));
@@ -60,9 +62,10 @@ public class Populator {
         scanItemsList.add(alwaysExists);
 
         for (int i = 1; i < amount; i++) {
+            idCounter++;
             Product product = new Product();
-            product.setId(i);
-            product.setName("Product_" + (i));
+            product.setId(idCounter);
+            product.setName("Product_" + (idCounter));
 
 
             product.addCode("barcode", "b" + getUniqueRandomString());
@@ -70,7 +73,7 @@ public class Populator {
             product.addCode("digitcode", "d" + getUniqueRandomString());
 
             product.setPrice(NumUtil.getRandomDouble(500));
-            product.setSelf(RefUtil.BASE_URL+Product.ALL+"/"+i);
+            product.setSelf(RefUtil.BASE_URL+Product.ALL+"/"+idCounter);
 
 
             if(NumUtil.oneInTen()){
@@ -106,19 +109,20 @@ public class Populator {
      */
     private void generateDummyCustomers(final int amount){
         for (int i = 0; i < amount; i++) {
+            idCounter++;
             Customer customer = new Customer();
             customer.setId(i);
-            customer.setName("Customer_" + i);
+            customer.setName("Customer_" + idCounter);
 
             FidelityCard fidelityCard = new FidelityCard();
-            fidelityCard.setName("FidelityCard_" + i);
+            fidelityCard.setName("FidelityCard_" + idCounter);
             // max 20% discount
             fidelityCard.setDiscount(new DiscountPercentage(NumUtil.getRandomInt(20)));
             fidelityCard.addCode("cardcode", "FC" + getUniqueRandomString());
 
             fidelityCard.setCustomer(customer);
-            fidelityCard.setId(i);
-            fidelityCard.setSelf(RefUtil.BASE_URL+FidelityCard.ALL+"/"+i);
+            fidelityCard.setId(idCounter);
+            fidelityCard.setSelf(RefUtil.BASE_URL+FidelityCard.ALL+"/"+idCounter);
             fidelityCardList.add(fidelityCard);
         }
     }

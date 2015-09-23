@@ -21,44 +21,64 @@ public class ProductController {
     @GET
     public Response getProducts(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
         Products list = new Products();
-        if(start > limit){
-            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (start-limit) + "&limit=" + limit);
-        }else{
+        if (start > limit) {
+            list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (start - limit) + "&limit=" + limit);
+        } else {
             list.setPrev(RefUtil.BASE_URL + Product.ALL + "?start=" + (0) + "&limit=" + limit);
         }
-        list.setNext(RefUtil.BASE_URL + Product.ALL + "?start=" + (start+limit) + "&limit=" + limit);
+        list.setNext(RefUtil.BASE_URL + Product.ALL + "?start=" + (start + limit) + "&limit=" + limit);
         list.setProductList(ScanItemRepository.getProducts(start, limit));
         return RestUtil.buildReponse(list, null);
     }
 
     @GET
     @Path("/{id}")
-    public Response getProductById(@PathParam("id") final int id){
+    public Response getProductById(@PathParam("id") final int id) {
         return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
     }
 
-//    @GET
-//    @Path("/barcode/{code}")
-//    public Response getProductByCode(@PathParam("code") final String code) {
-//        return RestUtil.buildReponse(ScanItemRepository.getItemByCode(code), code);
-//    }
 
     @POST
     @Path("/create")
     public Response create(@FormParam("json") String json) {
         Gson gson = new Gson();
 
-        //Register an InstanceCreator with Gson for this type may fix this problem. Discount
+        // TODO custom parser so discounts etc. can be added
         Product product = gson.fromJson(json, Product.class);
-        if(ScanItemRepository.scanItemExists(product)){
-            // go to put
-        }
+
         boolean success = ScanItemRepository.addProduct(product);
-        if(success){
-            return RestUtil.buildReponse("Product added: ", product.getId());
-        }else{
+        if (success) {
+            return RestUtil.buildReponse(product.getId(), json);
+        } else {
             return RestUtil.buildReponse("Failed to add product", json);
         }
+    }
+
+    @PUT
+    @Path("/update")
+    @Consumes( { MediaType.APPLICATION_FORM_URLENCODED })
+    public Response update(@FormParam("json") String json) {
+        Gson gson = new Gson();
+
+        // TODO custom parser so discounts etc. can be added
+        Product product = gson.fromJson(json, Product.class);
+        System.err.println(json);
+        if (!ScanItemRepository.scanItemExists(product)) {
+            return RestUtil.buildReponse("Failed to update product, id not found.", json);
+        }
+
+        boolean success = ScanItemRepository.updateProduct(product);
+        if (success) {
+            return RestUtil.buildReponse("Product updated: ", product);
+        } else {
+            return RestUtil.buildReponse("Failed to add product", json);
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteProduct(@PathParam("id") final int id) {
+        return RestUtil.buildReponse(ScanItemRepository.setItemDisabled(id), id);
     }
 
 
@@ -74,5 +94,10 @@ public class ProductController {
         return RestUtil.buildReponse(ScanItemRepository.getItemsByType(ScanItemRepository.getScanItems(), type), type);
     }
 
+    @GET
+    @Path("/barcode/{code}")
+    public Response getProductByCode(@PathParam("code") final String code) {
+        return RestUtil.buildReponse(ScanItemRepository.getItemByCode(code), code);
+    }
 
 }

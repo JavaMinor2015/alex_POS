@@ -17,7 +17,8 @@ public class RestUtil {
      * @return a Response object
      */
     public static Response buildReponse(Object o, Object... params){
-        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        //Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         if(o==null){
             return Response.ok(gson.toJson("Product(s) not found for parameters: " + params)).build();
         }

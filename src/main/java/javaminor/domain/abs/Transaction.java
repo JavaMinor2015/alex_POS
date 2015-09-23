@@ -21,6 +21,8 @@ import java.util.Map;
 public abstract class Transaction {
     private static Logger logger = LogManager.getLogger(Transaction.class.getName());
 
+    private int id;
+
     private Bill bill;
     private TransactionState state;
     private ScanItemRepository repository;

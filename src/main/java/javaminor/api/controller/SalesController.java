@@ -30,4 +30,10 @@ public class SalesController {
         list.setSaleList(TransactionRepository.getSales(start, limit));
         return RestUtil.buildReponse(list, null);
     }
+
+    @GET
+    @Path("/{id}")
+    public Response getProductById(@PathParam("id") final int id){
+        return RestUtil.buildReponse(TransactionRepository.getItemById(id), id);
+    }
 }

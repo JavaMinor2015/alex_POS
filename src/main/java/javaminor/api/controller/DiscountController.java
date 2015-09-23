@@ -29,4 +29,12 @@ public class DiscountController {
         list.setDiscountList(DiscountRepository.getDiscounts(start, limit));
         return RestUtil.buildReponse(list, null);
     }
+
+    @GET
+    @Path("/today")
+    public Response getDiscountsToday(){
+
+        // TODO implement discounts for dates
+        return getDiscounts(0,10);
+    }
 }

@@ -35,4 +35,13 @@ public class TransactionRepository {
 
 
     }
+
+    public static Transaction getItemById(final int id) {
+        for (Transaction transaction : saleList) {
+            if(transaction.getId()==(id)){
+                return transaction;
+            }
+        }
+        return null;
+    }
 }
