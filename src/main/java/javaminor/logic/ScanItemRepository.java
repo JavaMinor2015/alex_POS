@@ -17,9 +17,11 @@ import java.util.stream.Collectors;
  */
 public class ScanItemRepository {
     private static Logger logger = LogManager.getLogger(ScanItemRepository.class.getName());
+
     @Getter
     private static List<ScanItem> scanItems;
     private Object itemTypes;
+
     @Getter
     private static Populator populator;
 
@@ -109,7 +111,7 @@ public class ScanItemRepository {
     public static boolean scanItemExists(final ScanItem item){
         for (ScanItem scanItem : scanItems) {
             if(scanItem.equals(item)){
-                return true;
+                return true; // TODO change
             }
         }
         return false;

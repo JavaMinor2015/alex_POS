@@ -117,14 +117,14 @@ public abstract class ScanItem {
         return false;
     }
 
-    @Override
-    public boolean equals(Object other){
-        for (String code : scanCodes.keySet()) {
-            if(!((ScanItem)other).scanCodes.containsValue(code)){
-                return false;
-            }
-        }
-        return true;
-    }
+//    @Override
+//    public boolean equals(Object other){
+//        for (String code : scanCodes.keySet()) {
+//            if(!((ScanItem)other).scanCodes.containsValue(code)){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 }

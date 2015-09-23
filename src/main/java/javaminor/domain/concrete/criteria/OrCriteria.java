@@ -22,7 +22,9 @@ public class OrCriteria extends Criteria{
         List<ScanItem> meetCriteria = new ArrayList<>();
 
         for (Criteria crit : criteria) {
-            meetCriteria.addAll(crit.meetCriteria(items));
+            if(!meetCriteria.contains(crit)){
+                meetCriteria.addAll(crit.meetCriteria(items));
+            }
         }
 
         return meetCriteria;
