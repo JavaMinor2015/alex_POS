@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class FidelityCard extends ScanItem{
-    public static final String ALL = "/cards";
+    public static final String URL = "/cards";
     private String self;
     private String code;
     private Customer customer;

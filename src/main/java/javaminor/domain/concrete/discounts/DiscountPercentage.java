@@ -1,12 +1,14 @@
 package javaminor.domain.concrete.discounts;
 
 import javaminor.domain.abs.Discount;
+import javaminor.domain.abs.DiscountType;
 import javaminor.util.StrUtil;
 
 /**
  * Created by alex on 9/7/15.
  */
 public class DiscountPercentage extends Discount {
+    private final DiscountType type = DiscountType.PERCENTAGE;
 
     public DiscountPercentage(final long discount) {
         super(discount);

@@ -12,14 +12,14 @@ import javax.ws.rs.core.Response;
 /**
  * Created by alex on 9/23/15.
  */
-@Path(Discount.ALL)
+@Path(Discount.URL)
 @Produces({MediaType.APPLICATION_JSON})
 public class DiscountController {
 
     @GET
     public Response getDiscounts(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
         return RestUtil.buildReponse(
-                new RestModel<>(Discount.ALL,
+                new RestModel<>(Discount.URL,
                         start,
                         limit,
                         DiscountRepository.getDiscounts(start, limit)));

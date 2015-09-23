@@ -154,6 +154,8 @@ public class ScanItemRepository {
         if (product==null || !(product instanceof Product) | scanItemExists(product)){
             return false;
         }
+        // TODO fix with normal database implementation
+        product.setId(scanItems.get(scanItems.size()-1).getId()+1);
         scanItems.add(product);
         return true;
     }

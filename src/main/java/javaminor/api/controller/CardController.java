@@ -12,14 +12,14 @@ import javax.ws.rs.core.Response;
 /**
  * Created by alex on 9/23/15.
  */
-@Path(FidelityCard.ALL)
+@Path(FidelityCard.URL)
 @Produces({MediaType.APPLICATION_JSON})
 public class CardController {
 
     @GET
     public Response getCards(@DefaultValue("0") @QueryParam("start") final int start, @DefaultValue("10") @QueryParam("limit") final int limit) {
         return RestUtil.buildReponse(
-                new RestModel<>(FidelityCard.ALL,
+                new RestModel<>(FidelityCard.URL,
                         start,
                         limit,
                         ScanItemRepository.getCards(start, limit)));

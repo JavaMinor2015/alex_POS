@@ -1,7 +1,9 @@
 package javaminor.api.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javaminor.api.domain.RestModel;
+import javaminor.api.util.ProductDeserializer;
 import javaminor.api.util.RestUtil;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.logic.ScanItemRepository;
@@ -13,16 +15,18 @@ import javax.ws.rs.core.Response;
 /**
  * Created by Alex on 9/22/15.
  */
-@Path(Product.ALL)
+@Path(Product.URL)
 @Produces({MediaType.APPLICATION_JSON})
 public class ProductController {
+
+    // TODO implement bad request responses
 
     @GET
     public Response getProducts(@DefaultValue("0") @QueryParam("start") final
                                 int start, @DefaultValue("10")
                                 @QueryParam("limit") final int limit) {
         return RestUtil.buildReponse(
-                new RestModel<>(Product.ALL,
+                new RestModel<>(Product.URL,
                         start,
                         limit,
                         ScanItemRepository.getProducts(start, limit)));
@@ -31,6 +35,7 @@ public class ProductController {
     @GET
     @Path("/{id}")
     public Response getProductById(@PathParam("id") final int id) {
+        // TODO fix cards getting found as well
         return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
     }
 
@@ -38,10 +43,9 @@ public class ProductController {
     @POST
     @Path("/create")
     public Response create(@FormParam("json") String json) {
-        Gson gson = new Gson();
-
-        // TODO custom parser so discounts etc. can be added
-        Product product = gson.fromJson(json, Product.class);
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Product.class, new ProductDeserializer());
+        Product product = builder.create().fromJson(json, Product.class);
 
         boolean success = ScanItemRepository.addProduct(product);
         if (success) {
@@ -57,9 +61,9 @@ public class ProductController {
     public Response update(@FormParam("json") String json) {
         Gson gson = new Gson();
 
-        // TODO custom parser so discounts etc. can be added
+        // TODO use deserializer
         Product product = gson.fromJson(json, Product.class);
-        System.err.println(json);
+
         if (!ScanItemRepository.scanItemExists(product)) {
             return RestUtil.buildReponse("Failed to update product, id not " +
                     "found.", json);

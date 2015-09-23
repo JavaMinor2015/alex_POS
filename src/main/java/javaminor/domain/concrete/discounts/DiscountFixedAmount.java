@@ -1,6 +1,7 @@
 package javaminor.domain.concrete.discounts;
 
 import javaminor.domain.abs.Discount;
+import javaminor.domain.abs.DiscountType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DiscountFixedAmount extends Discount {
-
+    private final DiscountType type = DiscountType.FIXED_AMOUNT;
 
     public DiscountFixedAmount(double discount) {
         super(discount);

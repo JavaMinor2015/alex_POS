@@ -1,11 +1,14 @@
 package javaminor.domain.concrete.discounts;
 
 import javaminor.domain.abs.Discount;
+import javaminor.domain.abs.DiscountType;
 
 /**
  * Created by alex on 9/9/15.
  */
 public class DiscountOnAmount extends Discount {
+    private final DiscountType type = DiscountType.ON_AMOUNT_BOUGHT;
+
     private int toPay;
     private int toBeFree;
 

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
  */
 public abstract class Discount {
 
-    public static final String ALL = "/discounts";
+    public static final String URL = "/discounts";
     protected static Logger log = LogManager.getLogger(Discount.class.getName());
     @Getter
     protected double discountValue;
