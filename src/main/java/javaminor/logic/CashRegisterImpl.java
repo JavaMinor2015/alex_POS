@@ -98,7 +98,6 @@ public class CashRegisterImpl implements CashRegister {
      */
     @Override
     public void finishUpSale(final boolean print) {
-        sale.setState(TransactionState.PAID);
         sale.finishTransaction(print);
         if(sale.getState().equals(TransactionState.PAID)){
             sale.setState(TransactionState.CLOSED);
