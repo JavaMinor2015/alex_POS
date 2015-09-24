@@ -1,7 +1,12 @@
 package javaminor.api.controller;
 
+import com.google.gson.GsonBuilder;
 import javaminor.api.domain.RestModel;
+import javaminor.api.util.CustomerDeserializer;
+import javaminor.api.util.DiscountDeserializer;
 import javaminor.api.util.RestUtil;
+import javaminor.domain.abs.Discount;
+import javaminor.domain.concrete.scanitems.Customer;
 import javaminor.domain.concrete.scanitems.FidelityCard;
 import javaminor.logic.ScanItemRepository;
 
@@ -27,7 +32,45 @@ public class CardController {
 
     @GET
     @Path("/{id}")
-    public Response getProductById(@PathParam("id") final int id){
-        return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
+    public Response getCardById(@PathParam("id") final int id){
+        return RestUtil.buildReponse(ScanItemRepository.getCardById(id), id);
+    }
+
+    @POST
+    @Path("/create")
+    public Response create(@FormParam("json") String json) {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
+        builder.registerTypeAdapter(Customer.class, new CustomerDeserializer());
+        FidelityCard card = builder.create().fromJson(json,FidelityCard.class);
+
+        boolean success = ScanItemRepository.addCard(card);
+        if (success) {
+            return RestUtil.buildReponse(card.getId(), json);
+        } else {
+            return RestUtil.buildReponse("Failed to add card", json);
+        }
+    }
+
+    @PUT
+    @Path("/update")
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    public Response update(@FormParam("json") String json) {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
+        builder.registerTypeAdapter(Customer.class, new CustomerDeserializer());
+        FidelityCard card = builder.create().fromJson(json,FidelityCard.class);
+
+        if (!ScanItemRepository.scanItemExists(card)) {
+            return RestUtil.buildReponse("Failed to update card, id not " +
+                    "found.", json);
+        }
+
+        boolean success = ScanItemRepository.updateCard(card);
+        if (success) {
+            return RestUtil.buildReponse("Card updated: ", card);
+        } else {
+            return RestUtil.buildReponse("Failed to add card", json);
+        }
     }
 }

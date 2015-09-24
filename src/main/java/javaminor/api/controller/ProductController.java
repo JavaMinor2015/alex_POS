@@ -35,8 +35,7 @@ public class ProductController {
     @GET
     @Path("/{id}")
     public Response getProductById(@PathParam("id") final int id) {
-        // TODO fix cards getting found as well
-        return RestUtil.buildReponse(ScanItemRepository.getItemById(id), id);
+        return RestUtil.buildReponse(ScanItemRepository.getProductById(id), id);
     }
 
 

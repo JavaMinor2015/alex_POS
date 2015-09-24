@@ -178,6 +178,16 @@ public class ScanItemRepository {
         return true;
     }
 
+    public static boolean updateCard(final FidelityCard card) {
+        for (int i = 0; i < scanItems.size(); i++) {
+            if(scanItems.get(i).getId().equals(card.getId())){
+                scanItems.add(i,card);
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns true if a scan item already exists, false otherwise.
      * @param item the item to check
@@ -201,6 +211,24 @@ public class ScanItemRepository {
         return null;
     }
 
+    public static ScanItem getProductById(final int id){
+        for (ScanItem scanItem : filterProducts(scanItems)) {
+            if(scanItem.getId().equals(id)){
+                return scanItem;
+            }
+        }
+        return null;
+    }
+
+    public static ScanItem getCardById(final int id){
+        for (ScanItem scanItem : filterCards(scanItems)) {
+            if(scanItem.getId().equals(id)){
+                return scanItem;
+            }
+        }
+        return null;
+    }
+
 
     public static boolean setItemDisabled(final int id) {
         for (int i = 0; i < scanItems.size(); i++) {
@@ -211,4 +239,6 @@ public class ScanItemRepository {
         }
         return false;
     }
+
+
 }
