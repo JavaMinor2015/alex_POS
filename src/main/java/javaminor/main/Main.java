@@ -2,8 +2,10 @@ package javaminor.main;
 
 import javaminor.domain.abs.ScanItem;
 import javaminor.logic.CashRegisterImpl;
+import javaminor.logic.ScanItemRepository;
 import javaminor.logic.abs.CashRegister;
 import javaminor.util.NumUtil;
+import javaminor.util.Populator;
 import javaminor.util.PreferenceUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,9 +20,13 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Populator populator = ServletMain.getPopulator();
+        ScanItemRepository.setScanItems(populator.getAllScanItems());
+
+
         // for test data only, get 10 random products
-        List<ScanItem> randomProducts = ServletMain.getPopulator().getRandomSelectionFromProductList(10);
-        ScanItem randomFidelityCard = ServletMain.getPopulator().getRandomFidelityCard();
+        List<ScanItem> randomProducts = populator.getRandomSelectionFromProductList(10);
+        ScanItem randomFidelityCard = populator.getRandomFidelityCard();
 
         CashRegister register1 = new CashRegisterImpl();
 
@@ -37,10 +43,10 @@ public class Main {
         register1.scan(randomProducts.get(1).getCodeByType("barcode"));
 
         // product with a custom code
-        register1.scan(randomProducts.get(2).getCodeByType("customcode"));
+        register1.scan(randomProducts.get(2).getCodeByType("barcode"));
 
         // product with a digit code
-        register1.scan(randomProducts.get(3).getCodeByType("digitcode"));
+        register1.scan(randomProducts.get(3).getCodeByType("barcode"));
 
         // another product 1 popped up
         register1.scan(randomProducts.get(1).getCodeByType("barcode"));
@@ -55,7 +61,12 @@ public class Main {
 
         // TODO multiple coupon of same type not supported yet
         register1.payWithTypeCoupon(PreferenceUtil.getPRICING_CATEGORIES()[NumUtil.getRandomInt(PreferenceUtil.getPRICING_CATEGORIES().length)], 100);
-        register1.payWithDigital(-1);
+
+        logger.info("starting with validating");
+        register1.payWithDigital("123456789", 500);
+        logger.info("Paid with card");
+        register1.payWithCash(-1);
+
 
         // do the finishing up
         register1.finishUpSale();

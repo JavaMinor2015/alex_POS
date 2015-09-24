@@ -163,9 +163,6 @@ public abstract class Transaction {
     protected final boolean payWithItem(final PaymentItem item) {
         boolean success = false;
         String type = item.getType();
-        if (item == null) {
-            return false;
-        }
         //if (state != TransactionState.CLOSED & state != TransactionState.PAID) {
             state = TransactionState.PAYING;
             if (item.hasType()) {
@@ -175,9 +172,9 @@ public abstract class Transaction {
                 // means it's a general item
                 success = payNormal(item);
             }
-       // }else{
-            //logger.error("Transaction not in the correct state, cannot pay.");
-        //}
+      //  }else{
+       //     logger.error("Transaction not in the correct state, cannot pay.");
+       // }
 
         // if everything was paid, state changes to PAID
         if (totalPriceRemaining <= 0 & success) {
@@ -188,7 +185,6 @@ public abstract class Transaction {
 
     private boolean payNormal(final PaymentItem item) {
         if (item.getAmount() < -1) {
-
             logger.error("Payment value is incorrect: " + item.getAmount());
             return false;
         }
@@ -207,13 +203,15 @@ public abstract class Transaction {
 
             double remainder = item.getAmount();
 
-            while (remainder > 0) {
-                // bring category remaining down as well
-                for (String type : priceRemainingPerCategory.keySet()) {
-                    remainder = Math.max(0, priceRemainingPerCategory.get(type) - remainder);
-                    priceRemainingPerCategory.put(type, remainder);
-                }
-            }
+            // TODO infinite loop, when payment is larger than amount?
+
+//            while (remainder > 0) {
+//                // bring category remaining down as well
+//                for (String type : priceRemainingPerCategory.keySet()) {
+//                    remainder = Math.max(0, priceRemainingPerCategory.get(type) - remainder);
+//                    priceRemainingPerCategory.put(type, remainder);
+//                }
+//            }
 
         }
         return true;
@@ -233,8 +231,6 @@ public abstract class Transaction {
         }
 
         Double priceRemaining = priceRemainingPerCategory.get(type);
-
-        System.err.println(priceRemaining);
 
         // cannot overpay with a specialty payment item, so capped at 0
         priceRemaining = new Double(priceRemaining - item.getAmount());

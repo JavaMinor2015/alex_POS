@@ -40,7 +40,7 @@ public interface CashRegister {
     void scan(final String code);
     void payWithTypeCoupon(final String type, final double amount);
     void payWithCash(final double amount);
-    void payWithDigital(final double amount);
+    void payWithDigital(String identifier, final double amount);
 
     void startNewSale();
     void finishUpSale();

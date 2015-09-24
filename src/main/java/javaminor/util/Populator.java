@@ -59,6 +59,7 @@ public class Populator {
         alwaysExists.addCode("barcode", "b123456");
         alwaysExists.setPrice(NumUtil.getRandomDouble(500));
         alwaysExists.setSelf(RefUtil.BASE_URL + Product.URL + "/" + idCounter);
+        alwaysExists.setDiscount(new DiscountNone());
         scanItemsList.add(alwaysExists);
 
         for (int i = 1; i < amount; i++) {

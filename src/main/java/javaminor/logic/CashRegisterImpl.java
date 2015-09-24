@@ -1,5 +1,6 @@
 package javaminor.logic;
 
+import javaminor.SOAPclient.PaymentClient;
 import javaminor.domain.abs.Transaction;
 import javaminor.domain.concrete.paymentitems.Cash;
 import javaminor.domain.concrete.paymentitems.Digital;
@@ -25,20 +26,19 @@ public class CashRegisterImpl implements CashRegister {
 
     // TODO clean up mess, make all actions similar (Reservation/Return/Sale)
 
-    public CashRegisterImpl(){
+    public CashRegisterImpl() {
         sales = new ArrayList<>();
         returns = new ArrayList<>();
     }
 
 
-
     // TODO possibly warn if previous sale hasn't finished properly yet?
     @Override
-    public void startNewSale(){
-        if(sale!=null){
+    public void startNewSale() {
+        if (sale != null) {
             sales.add(sale);
         }
-        if(returnz!=null){
+        if (returnz != null) {
             returns.add(returnz);
         }
         sale = new Sale();
@@ -47,40 +47,45 @@ public class CashRegisterImpl implements CashRegister {
 
     /**
      * Handles any codes scanned by a cashier.
-     *
+     * <p>
      * Delegates codes to proper handlers.
      *
      * @param code the scanned code
      */
     @Override
-    public void scan(final String code){
+    public void scan(final String code) {
         sale.handleCode(code);
-        //logger.info("Scanned code: "+ code);
+//        logger.info("Scanned code: "+ code);
     }
-
 
     // button on register
     @Override
-    public void payWithTypeCoupon(final String type, final double amount){
+    public void payWithTypeCoupon(final String type, final double amount) {
         sale.handlePayment(new TypeCoupon(type, amount));
     }
 
     // button on register
     @Override
-    public void payWithCash(final double amount){
+    public void payWithCash(final double amount) {
         sale.handlePayment(new Cash(amount));
     }
 
     @Override
-    public void payWithDigital(final double amount) {
-        sale.handlePayment(new Digital(amount));
+    public void payWithDigital(String identifier, final double amount) {
+        if (new PaymentClient().checkValidity(identifier, amount)){
+            sale.handlePayment(new Digital(amount));
+            logger.info("Payment card is valid and the budget is sufficient. Paid " + amount);
+        }else{
+            logger.info("Payment card is not valid or the budget is insufficient: " + identifier);
+        }
+
     }
 
     /**
      * Transaction done, print bill and create a new one.
      */
     @Override
-    public void finishUpSale(){
+    public void finishUpSale() {
         // TODO move print decision up to caller
         logger.info("");
         logger.info("");
@@ -93,7 +98,7 @@ public class CashRegisterImpl implements CashRegister {
     }
 
     @Override
-    public void makeReservation(final List<String> codes){
+    public void makeReservation(final List<String> codes) {
         // TODO implement
     }
 
