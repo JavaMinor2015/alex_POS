@@ -1,10 +1,8 @@
 package javaminor.api.controller;
 
-import com.google.gson.GsonBuilder;
 import javaminor.api.domain.RestModel;
 import javaminor.api.util.DiscountDeserializer;
 import javaminor.api.util.RestUtil;
-import javaminor.domain.abs.Discount;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.logic.ScanItemRepository;
 
@@ -42,9 +40,8 @@ public class ProductController {
     @POST
     @Path("/create")
     public Response create(@FormParam("json") String json) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
-        Product product = builder.create().fromJson(json, Product.class);
+
+        Product product = RestUtil.getBuilder(new DiscountDeserializer()).create().fromJson(json, Product.class);
 
         boolean success = ScanItemRepository.addProduct(product);
         if (success) {
@@ -59,9 +56,7 @@ public class ProductController {
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Response update(@FormParam("json") String json) {
 
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
-        Product product = builder.create().fromJson(json, Product.class);
+        Product product = RestUtil.getBuilder(new DiscountDeserializer()).create().fromJson(json, Product.class);
 
         if (!ScanItemRepository.scanItemExists(product)) {
             return RestUtil.buildReponse("Failed to update product, id not " +

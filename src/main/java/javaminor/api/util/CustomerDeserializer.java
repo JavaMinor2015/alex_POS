@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 /**
  * Created by alex on 9/24/15.
  */
-public class CustomerDeserializer implements AbstractDeserializer, JsonDeserializer<Customer> {
+public class CustomerDeserializer extends AbstractDeserializer<Customer>{
 
     @Override
     public Customer deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

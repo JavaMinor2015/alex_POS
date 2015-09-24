@@ -1,12 +1,9 @@
 package javaminor.api.controller;
 
-import com.google.gson.GsonBuilder;
 import javaminor.api.domain.RestModel;
 import javaminor.api.util.CustomerDeserializer;
 import javaminor.api.util.DiscountDeserializer;
 import javaminor.api.util.RestUtil;
-import javaminor.domain.abs.Discount;
-import javaminor.domain.concrete.scanitems.Customer;
 import javaminor.domain.concrete.scanitems.FidelityCard;
 import javaminor.logic.ScanItemRepository;
 
@@ -39,10 +36,10 @@ public class CardController {
     @POST
     @Path("/create")
     public Response create(@FormParam("json") String json) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
-        builder.registerTypeAdapter(Customer.class, new CustomerDeserializer());
-        FidelityCard card = builder.create().fromJson(json,FidelityCard.class);
+
+        FidelityCard card = RestUtil.getBuilder(new DiscountDeserializer(),new CustomerDeserializer())
+                .create()
+                .fromJson(json, FidelityCard.class);
 
         boolean success = ScanItemRepository.addCard(card);
         if (success) {
@@ -56,10 +53,10 @@ public class CardController {
     @Path("/update")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Response update(@FormParam("json") String json) {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
-        builder.registerTypeAdapter(Customer.class, new CustomerDeserializer());
-        FidelityCard card = builder.create().fromJson(json,FidelityCard.class);
+
+        FidelityCard card = RestUtil.getBuilder(new DiscountDeserializer(),new CustomerDeserializer())
+                .create()
+                .fromJson(json, FidelityCard.class);
 
         if (!ScanItemRepository.scanItemExists(card)) {
             return RestUtil.buildReponse("Failed to update card, id not " +

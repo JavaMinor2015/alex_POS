@@ -1,9 +1,10 @@
 package javaminor.api.util;
 
+import com.google.gson.JsonDeserializer;
+
 /**
  * Created by alex on 9/24/15.
  */
-public interface AbstractDeserializer {
-    Class getClazz();
-
+public abstract class AbstractDeserializer<T> implements JsonDeserializer<T>{
+    abstract Class getClazz();
 }
