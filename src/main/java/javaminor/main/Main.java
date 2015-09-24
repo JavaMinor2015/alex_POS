@@ -69,7 +69,7 @@ public class Main {
 
 
         // do the finishing up
-        register1.finishUpSale();
+        register1.finishUpSale(true);
 
         // prove items were saved
         //logger.info(randomFidelityCard.getProductHistory().size() + " purchase(s) made by this customer!");

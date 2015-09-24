@@ -43,7 +43,7 @@ public interface CashRegister {
     void payWithDigital(String identifier, final double amount);
 
     void startNewSale();
-    void finishUpSale();
+    void finishUpSale(boolean print);
 
     void makeReturn(final String code);
     void finishUpReturn();

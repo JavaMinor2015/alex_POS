@@ -7,6 +7,7 @@ import javaminor.domain.concrete.paymentitems.Digital;
 import javaminor.domain.concrete.paymentitems.TypeCoupon;
 import javaminor.domain.concrete.transactions.Return;
 import javaminor.domain.concrete.transactions.Sale;
+import javaminor.domain.concrete.transactions.TransactionState;
 import javaminor.logic.abs.CashRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,7 @@ public class CashRegisterImpl implements CashRegister {
             returns.add(returnz);
         }
         sale = new Sale();
+        sale.setState(TransactionState.OPENED);
         returnz = new Return();
     }
 
@@ -54,6 +56,7 @@ public class CashRegisterImpl implements CashRegister {
      */
     @Override
     public void scan(final String code) {
+        sale.setState(TransactionState.MUTATING);
         sale.handleCode(code);
 //        logger.info("Scanned code: "+ code);
     }
@@ -61,17 +64,20 @@ public class CashRegisterImpl implements CashRegister {
     // button on register
     @Override
     public void payWithTypeCoupon(final String type, final double amount) {
+        sale.setState(TransactionState.PAYING);
         sale.handlePayment(new TypeCoupon(type, amount));
     }
 
     // button on register
     @Override
     public void payWithCash(final double amount) {
+        sale.setState(TransactionState.PAYING);
         sale.handlePayment(new Cash(amount));
     }
 
     @Override
     public void payWithDigital(String identifier, final double amount) {
+        sale.setState(TransactionState.PAYING);
         boolean success = false;
         if (new PaymentClient().checkValidity(identifier, amount)) {
             success = sale.handlePayment(new Digital(amount));
@@ -91,11 +97,15 @@ public class CashRegisterImpl implements CashRegister {
      * Transaction done, print bill and create a new one.
      */
     @Override
-    public void finishUpSale() {
-        // TODO move print decision up to caller
-        logger.info("");
-        logger.info("");
-        sale.finishTransaction(true);
+    public void finishUpSale(final boolean print) {
+        sale.setState(TransactionState.PAID);
+        sale.finishTransaction(print);
+        if(sale.getState().equals(TransactionState.PAID)){
+            sale.setState(TransactionState.CLOSED);
+        }else{
+            logger.info("State not paid, can't close.");
+        }
+
     }
 
     @Override

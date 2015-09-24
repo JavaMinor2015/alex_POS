@@ -35,8 +35,6 @@ public abstract class Transaction {
     private Map<String, Double> priceRemainingPerCategory;
 
     public Transaction() {
-        state = TransactionState.OPENED;
-
         bill = new Bill();
         repository = new ScanItemRepository();
         basket = new Basket();
@@ -49,8 +47,6 @@ public abstract class Transaction {
             pricePerCategory.put(category, new Double(0));
             priceRemainingPerCategory.put(category, new Double(0));
         }
-
-        state = TransactionState.MUTATING;
     }
 
     /**
@@ -163,18 +159,14 @@ public abstract class Transaction {
     protected final boolean payWithItem(final PaymentItem item) {
         boolean success = false;
         String type = item.getType();
-        //if (state != TransactionState.CLOSED & state != TransactionState.PAID) {
-            state = TransactionState.PAYING;
-            if (item.hasType()) {
-                // means it's a category specific item
-                success = payPerCategory(item);
-            } else {
-                // means it's a general item
-                success = payNormal(item);
-            }
-      //  }else{
-       //     logger.error("Transaction not in the correct state, cannot pay.");
-       // }
+
+        if (item.hasType()) {
+            // means it's a category specific item
+            success = payPerCategory(item);
+        } else {
+            // means it's a general item
+            success = payNormal(item);
+        }
 
         // if everything was paid, state changes to PAID
         if (totalPriceRemaining <= 0 & success) {
