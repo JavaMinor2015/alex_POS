@@ -49,7 +49,6 @@ public class Sale extends Transaction{
 
     @Override
     public boolean handlePayment(final PaymentItem item) {
-
         return payWithItem(item);
     }
 

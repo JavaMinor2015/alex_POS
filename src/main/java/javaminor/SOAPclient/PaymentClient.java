@@ -13,13 +13,23 @@ public class PaymentClient {
     public boolean checkValidity(String identifier, double amount){
         try{
             PaymentImplService service = new PaymentImplService();
-            logger.info("Connecting to the service");
             PaymentImpl port = service.getPaymentImplPort();
-            logger.info("Returning service value");
             return port.validateCard(identifier, amount);
         }catch(Exception e){
             e.printStackTrace();
             logger.info("Could not reach validation service");
+            return false;
+        }
+    }
+
+    public boolean pay(String identifier, double amount) {
+        try{
+            PaymentImplService service = new PaymentImplService();
+            PaymentImpl port = service.getPaymentImplPort();
+            return port.pay(identifier, amount);
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.info("Could not reach payment service");
             return false;
         }
     }

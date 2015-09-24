@@ -72,10 +72,16 @@ public class CashRegisterImpl implements CashRegister {
 
     @Override
     public void payWithDigital(String identifier, final double amount) {
-        if (new PaymentClient().checkValidity(identifier, amount)){
-            sale.handlePayment(new Digital(amount));
+        boolean success = false;
+        if (new PaymentClient().checkValidity(identifier, amount)) {
+            success = sale.handlePayment(new Digital(amount));
+        }
+        if (success) {
+            PaymentClient paymentClient = new PaymentClient();
+            paymentClient.pay(identifier,amount);
             logger.info("Payment card is valid and the budget is sufficient. Paid " + amount);
-        }else{
+        } else {
+            sale.setTotalPriceRemaining(sale.getTotalPriceRemaining() + amount);
             logger.info("Payment card is not valid or the budget is insufficient: " + identifier);
         }
 
