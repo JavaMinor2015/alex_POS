@@ -1,6 +1,5 @@
 package javaminor.api.controller;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import javaminor.api.domain.RestModel;
 import javaminor.api.util.DiscountDeserializer;
@@ -60,10 +59,10 @@ public class ProductController {
     @Path("/update")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Response update(@FormParam("json") String json) {
-        Gson gson = new Gson();
 
-        // TODO use deserializer
-        Product product = gson.fromJson(json, Product.class);
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Discount.class, new DiscountDeserializer());
+        Product product = builder.create().fromJson(json, Product.class);
 
         if (!ScanItemRepository.scanItemExists(product)) {
             return RestUtil.buildReponse("Failed to update product, id not " +

@@ -58,7 +58,7 @@ public class Populator {
         alwaysExists.setName("ProductName");
         alwaysExists.addCode("barcode", "b123456");
         alwaysExists.setPrice(NumUtil.getRandomDouble(500));
-        alwaysExists.setSelf(RefUtil.BASE_URL + Product.URL + "/" + 0);
+        alwaysExists.setSelf(RefUtil.BASE_URL + Product.URL + "/" + idCounter);
         scanItemsList.add(alwaysExists);
 
         for (int i = 1; i < amount; i++) {
@@ -111,7 +111,7 @@ public class Populator {
         for (int i = 0; i < amount; i++) {
             idCounter++;
             Customer customer = new Customer();
-            customer.setId(i);
+            customer.setId(idCounter);
             customer.setName("Customer_" + idCounter);
 
             FidelityCard fidelityCard = new FidelityCard();
