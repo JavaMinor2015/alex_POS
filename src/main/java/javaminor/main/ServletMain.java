@@ -2,6 +2,8 @@ package javaminor.main;
 
 import javaminor.SOAPclient.PaymentImpl;
 import javaminor.SOAPclient.PaymentImplService;
+import javaminor.data.access.DataHandler;
+import javaminor.data.object.ScanItemHandler;
 import javaminor.logic.ScanItemRepository;
 import javaminor.util.Populator;
 import lombok.Getter;
@@ -28,7 +30,8 @@ public class ServletMain implements ServletContextListener {
         populator.populate();
 
         // assign the populated data to the repository
-        ScanItemRepository.setScanItems(populator.getAllScanItems());
+        //ScanItemRepository.setScanItems(populator.getAllScanItems());
+        ScanItemRepository.setScanItems(new ScanItemHandler(new DataHandler()).getAllScanItems());
 
         logger.error("Finished initializing.");
         logger.error("Checking payment validation.");

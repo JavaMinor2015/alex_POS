@@ -5,6 +5,8 @@ import javaminor.domain.abs.ScanItem;
 import javaminor.logic.factories.FidelityCardFactory;
 import javaminor.logic.factories.ProductFactory;
 
+import java.util.Map;
+
 /**
  * Created by alex on 9/23/15.
  */
@@ -15,7 +17,8 @@ public abstract class ScanItemFactory {
 
     }
 
-    public ScanItemFactory getFactory(final FactoryType factoryType) {
+    public static ScanItemFactory getFactory(final String type) {
+        FactoryType factoryType = FactoryType.valueOf(type);
         try {
             return factoryType.getFactory();
         } catch (IllegalAccessException e) {
@@ -26,9 +29,9 @@ public abstract class ScanItemFactory {
         return null;
     }
 
-    public abstract ScanItem createProduct(final String name, final String codeType, final String code, final double price);
+    public abstract ScanItem createProduct(final String name, Map<String, String> codeMap, final double price);
 
-    public abstract ScanItem createFidelityCard(final String codeName, final String code, final String customerName);
+    public abstract ScanItem createFidelityCard(String cardName, Map<String, String> codeMap, final String customerName);
 
     /**
      * Separate method for adding discount.

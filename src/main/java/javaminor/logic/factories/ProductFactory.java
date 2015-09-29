@@ -4,6 +4,8 @@ import javaminor.domain.abs.ScanItem;
 import javaminor.domain.concrete.scanitems.Product;
 import javaminor.logic.abs.ScanItemFactory;
 
+import java.util.Map;
+
 /**
  * Created by alex on 9/7/15.
  */
@@ -15,16 +17,16 @@ public class ProductFactory extends ScanItemFactory {
     }
 
     @Override
-    public ScanItem createProduct(final String name, final String codeType, final String code, final double price) {
+    public ScanItem createProduct(final String name, Map<String, String> codeMap, final double price) {
         Product product = new Product();
         product.setName(name);
-        product.addCode(codeType, code);
+        product.setScanCodes(codeMap);
         product.setPrice(price);
         return product;
     }
 
     @Override
-    public ScanItem createFidelityCard(final String codeName, final String code, final String customerName) {
+    public ScanItem createFidelityCard(String cardName, Map<String, String> codeMap, final String customerName) {
         return null;
     }
 
