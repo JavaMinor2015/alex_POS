@@ -13,9 +13,9 @@ public class NumUtil {
 
     public static double getRandomDouble(final int max) {
         Random r = new Random();
-        double decimals = (r.nextDouble()*10)-0.01;
+        double decimals = (r.nextDouble())-0.01;
         int num = getRandomInt(max);
-        return decimals + num;
+        return num + decimals;
     }
 
     public static boolean fiftyFifty(){

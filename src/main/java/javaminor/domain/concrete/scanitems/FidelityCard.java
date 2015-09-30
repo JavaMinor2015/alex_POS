@@ -18,6 +18,7 @@ public class FidelityCard extends ScanItem{
     private String self;
     private String code;
     private Customer customer;
+    private long points;
     private Map<DateTime, Map<Product,Integer>> productHistory;
 
     public FidelityCard(){

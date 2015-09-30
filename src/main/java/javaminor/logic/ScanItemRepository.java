@@ -23,51 +23,54 @@ public class ScanItemRepository {
     @Setter
     private static List<ScanItem> scanItems;
 
-    public ScanItemRepository(){
+    public ScanItemRepository() {
 
     }
 
-    public static List<ScanItem> getProducts(){
-        return getProducts(0,10);
+    public static List<ScanItem> getProducts() {
+        return getProducts(0, 10);
     }
 
-    public static List<ScanItem> getProducts(final int startIndex){
+    public static List<ScanItem> getProducts(final int startIndex) {
         return getProducts(startIndex, 10);
     }
 
-    public static List<ScanItem> getProducts(final int startIndex, final int size){
+    public static List<ScanItem> getProducts(final int startIndex, final int size) {
         List<ScanItem> products = filterProducts(scanItems);
 
         int start = startIndex;
         int end = startIndex + size;
 
-        if(start > products.size()){
+        if (start > products.size()) {
             start = products.size() - size;
         }
-        if(end > products.size()){
+        if (end > products.size()) {
             end = products.size();
+        }
+        if (start + end > products.size()) {
+            return products.subList(start, products.size());
         }
         return products.subList(start, end);
     }
 
-    public static List<ScanItem> getCards(){
+    public static List<ScanItem> getCards() {
         return getCards(0, 10);
     }
 
-    public static List<ScanItem> getCards(final int startIndex){
+    public static List<ScanItem> getCards(final int startIndex) {
         return getCards(startIndex, 10);
     }
 
-    public static List<ScanItem> getCards(final int startIndex, final int size){
+    public static List<ScanItem> getCards(final int startIndex, final int size) {
         List<ScanItem> cards = filterCards(scanItems);
 
         int start = startIndex;
         int end = startIndex + size;
 
-        if(start > cards.size()){
+        if (start > cards.size()) {
             start = cards.size() - size;
         }
-        if(end > cards.size()){
+        if (end > cards.size()) {
             end = cards.size();
         }
         return cards.subList(start, end);
@@ -76,23 +79,24 @@ public class ScanItemRepository {
     private static List<ScanItem> filterProducts(final List<ScanItem> scanItems) {
         List<ScanItem> results = new ArrayList<>();
         for (ScanItem scanItem : scanItems) {
-            if(scanItem instanceof Product & !scanItem.isDisabled()){
-                results.add(scanItem);
-            }
-        }
-        return results;
-    }
-    private static List<ScanItem> filterCards(final List<ScanItem> scanItems) {
-        List<ScanItem> results = new ArrayList<>();
-        for (ScanItem scanItem : scanItems) {
-            if(scanItem instanceof FidelityCard & !scanItem.isDisabled()){
+            if (scanItem instanceof Product & !scanItem.isDisabled()) {
                 results.add(scanItem);
             }
         }
         return results;
     }
 
-    public static ScanItem getItemByCode(final String code){
+    private static List<ScanItem> filterCards(final List<ScanItem> scanItems) {
+        List<ScanItem> results = new ArrayList<>();
+        for (ScanItem scanItem : scanItems) {
+            if (scanItem instanceof FidelityCard & !scanItem.isDisabled()) {
+                results.add(scanItem);
+            }
+        }
+        return results;
+    }
+
+    public static ScanItem getItemByCode(final String code) {
 //        List<ScanItem> found = new ArrayList<ScanItem>();
 //
 //        for (ScanItem scanItem : scanItems) {
@@ -104,8 +108,19 @@ public class ScanItemRepository {
                 .filter(scanItem -> scanItem.hasCodeValue(code))
                 .collect(Collectors.toList());
 
+        if(found.size() == 0){
+            // might be a card
+            for (ScanItem scanItem : scanItems) {
+                if(scanItem instanceof FidelityCard){
+                    if(((FidelityCard)scanItem).getCode().equals(code)){
+                        found.add(scanItem);
+                    }
+                }
+            }
+        }
+
         // more than one product found
-        if(found.size() > 1){
+        if (found.size() > 1) {
             logger.error("More than one product matches an id for " + code);
             logger.error("Product was not added.");
             found.forEach(logger::error);
@@ -115,7 +130,7 @@ public class ScanItemRepository {
         }
 
         // less than one product found
-        if (found.size() < 1){
+        if (found.size() < 1) {
             logger.error("Not one product matches an id for " + code);
             // no error messages, no product found, but code might not be meant for this method
             // return false to inform caller nothing happened
@@ -151,19 +166,19 @@ public class ScanItemRepository {
     }
 
     public static boolean addProduct(final Product product) {
-        if (product==null || !(product instanceof Product) | scanItemExists(product)){
+        if (product == null || !(product instanceof Product) | scanItemExists(product)) {
             return false;
         }
         // TODO fix with normal database implementation
-        product.setId(scanItems.get(scanItems.size()-1).getId()+1);
+        product.setId(scanItems.get(scanItems.size() - 1).getId() + 1);
         scanItems.add(product);
         return true;
     }
 
     public static boolean updateProduct(final Product product) {
         for (int i = 0; i < scanItems.size(); i++) {
-            if(scanItems.get(i).getId().equals(product.getId())){
-                scanItems.add(i,product);
+            if (scanItems.get(i).getId().equals(product.getId())) {
+                scanItems.add(i, product);
                 return true;
             }
         }
@@ -171,7 +186,7 @@ public class ScanItemRepository {
     }
 
     public static boolean addCard(final FidelityCard card) {
-        if (card==null || !(card instanceof FidelityCard) | scanItemExists(card)){
+        if (card == null || !(card instanceof FidelityCard) | scanItemExists(card)) {
             return false;
         }
         scanItems.add(card);
@@ -180,8 +195,8 @@ public class ScanItemRepository {
 
     public static boolean updateCard(final FidelityCard card) {
         for (int i = 0; i < scanItems.size(); i++) {
-            if(scanItems.get(i).getId().equals(card.getId())){
-                scanItems.add(i,card);
+            if (scanItems.get(i).getId().equals(card.getId())) {
+                scanItems.add(i, card);
                 return true;
             }
         }
@@ -190,12 +205,13 @@ public class ScanItemRepository {
 
     /**
      * Returns true if a scan item already exists, false otherwise.
+     *
      * @param item the item to check
      * @return true if exists, false otherwise.
      */
-    public static boolean scanItemExists(final ScanItem item){
+    public static boolean scanItemExists(final ScanItem item) {
         for (ScanItem scanItem : scanItems) {
-            if(scanItem.getId().equals(item.getId())){
+            if (scanItem.getId().equals(item.getId())) {
                 return true;
             }
         }
@@ -204,25 +220,25 @@ public class ScanItemRepository {
 
     public static ScanItem getItemById(final int id) {
         for (ScanItem scanItem : scanItems) {
-            if(scanItem.getId().equals(id)){
+            if (scanItem.getId().equals(id)) {
                 return scanItem;
             }
         }
         return null;
     }
 
-    public static ScanItem getProductById(final int id){
+    public static ScanItem getProductById(final int id) {
         for (ScanItem scanItem : filterProducts(scanItems)) {
-            if(scanItem.getId().equals(id)){
+            if (scanItem.getId().equals(id)) {
                 return scanItem;
             }
         }
         return null;
     }
 
-    public static ScanItem getCardById(final int id){
+    public static ScanItem getCardById(final int id) {
         for (ScanItem scanItem : filterCards(scanItems)) {
-            if(scanItem.getId().equals(id)){
+            if (scanItem.getId().equals(id)) {
                 return scanItem;
             }
         }
@@ -232,7 +248,7 @@ public class ScanItemRepository {
 
     public static boolean setItemDisabled(final int id) {
         for (int i = 0; i < scanItems.size(); i++) {
-            if(scanItems.get(i).getId().equals(id)){
+            if (scanItems.get(i).getId().equals(id)) {
                 scanItems.get(i).setDisabled(true);
                 return true;
             }
